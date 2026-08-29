@@ -42,8 +42,8 @@ export const categorias: Categoria[] = [
       "Ferramentas para aprender melhor: foco, revisão, quizzes e tudo que ajuda na hora de estudar.",
     apps: [
       {
-        nome: "FocoTotal",
-        descricao: "Timer pomodoro minimalista com ciclos de foco e pausa.",
+        nome: "Funções Matemáticas",
+        descricao: "Funções matemáticas com fórmulas, gráficos e principais propriedades para estudo e consulta rápida.",
         imagem: "/apps/estudos-1.jpg",
         link: "#",
       },
