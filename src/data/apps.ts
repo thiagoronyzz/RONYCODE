@@ -45,7 +45,7 @@ export const categorias: Categoria[] = [
         nome: "Funções Matemáticas",
         descricao: "Funções matemáticas com fórmulas, gráficos e principais propriedades para estudo e consulta rápida.",
         imagem: "/apps/estudos-1.jpg",
-        link: "#",
+        link: "/RONYCODE/Estudos/funcoes(01)/",
       },
       {
         nome: "QuizMaster",
