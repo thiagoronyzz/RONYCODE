@@ -12,6 +12,14 @@
      link: "https://seuapp.com",   → para onde o cartão aponta
    }
 
+   Seus apps em HTML puro ficam em "public/RONYCODE/...". Tudo que está
+   dentro de "public" é servido na raiz do site, então o arquivo
+   public/RONYCODE/Estudos/funcoes(01)/index.html
+   abre em  →  /RONYCODE/Estudos/funcoes(01)/index.html
+
+   Importante: aponte sempre para o arquivo final (".../index.html").
+   Sem o "index.html" o Vite devolve a página do site em vez do app.
+
    Para criar um NOVO cartão, copie um bloco inteiro { ... } e cole
    dentro da categoria desejada. O site atualiza sozinho. ✦
    ══════════════════════════════════════════════════════════════════ */
@@ -45,7 +53,7 @@ export const categorias: Categoria[] = [
         nome: "Funções Matemáticas",
         descricao: "Funções matemáticas com fórmulas, gráficos e principais propriedades para estudo e consulta rápida.",
         imagem: "/apps/estudos-1.jpg",
-        link: "/RONYCODE/Estudos/funcoes(01)/",
+        link: "/RONYCODE/Estudos/funcoes(01)/index.html",
       },
       {
         nome: "QuizMaster",
