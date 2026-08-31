@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Menu, Terminal, X } from "lucide-react";
 import { categorias } from "../data/apps";
 import { cn } from "../utils/cn";
+import { BotaoBaixarApp } from "./InstallApp";
 
 export default function Navbar() {
   const [rolado, setRolado] = useState(false);
@@ -79,6 +80,7 @@ export default function Navbar() {
             Explorar apps
             <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </a>
+          <BotaoBaixarApp variante="escuro" className="hidden md:inline-flex" />
           <button
             onClick={() => setAberto(!aberto)}
             className="grid size-10 place-items-center rounded-xl bg-white ring-1 ring-ink/10 md:hidden"
@@ -114,6 +116,13 @@ export default function Navbar() {
                 </li>
               ))}
             </ul>
+            <div className="px-5 pb-5">
+              <BotaoBaixarApp
+                variante="primario"
+                rotulo="Baixar aplicativo"
+                className="w-full justify-center"
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
