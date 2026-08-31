@@ -1,6 +1,6 @@
 {
   "name": "RONYCODE — Plataforma de Aplicativos",
-  "short_name": "RONYCODE",
+  "short_name": "TRcode",
   "description": "Hub com todos os aplicativos RONYCODE: estudos, jogos, ferramentas úteis e social. Funciona offline.",
   "id": "/",
   "start_url": "/?source=pwa",
