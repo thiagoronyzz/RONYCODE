@@ -3,7 +3,7 @@
    - navegações (HTML): rede primeiro, cai para o cache quando offline
    - demais arquivos: cache primeiro, atualizando em segundo plano   */
 
-const VERSAO = "ronycode-v1";
+const VERSAO = "trcode-v1";
 const ESSENCIAIS = [
   "/",
   "/index.html",
@@ -43,6 +43,23 @@ self.addEventListener("fetch", (evento) => {
 
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  // O manifest precisa ser sempre fresco: é ele que define
+  // o nome/ícone do app instalado no celular.
+  if (url.pathname === "/manifest.webmanifest") {
+    evento.respondWith(
+      fetch(req)
+        .then((resp) => {
+          if (resp && resp.status === 200) {
+            const copia = resp.clone();
+            caches.open(VERSAO).then((c) => c.put("/manifest.webmanifest", copia));
+          }
+          return resp;
+        })
+        .catch(async () => (await caches.match(req)) || (await caches.match("/manifest.webmanifest")))
+    );
+    return;
+  }
 
   if (req.mode === "navigate") {
     evento.respondWith(
