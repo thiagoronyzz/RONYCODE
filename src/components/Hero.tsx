@@ -128,14 +128,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.55 }}
-            className="max-w-md text-base leading-relaxed text-ink/60 md:text-lg"
+            className="max-w-md font-display text-3xl font-bold tracking-tight text-ink md:text-5xl"
           >
-            Um hub com todos os meus aplicativos web — de{" "}
-            <span className="font-semibold text-brand-600">estudos</span> a{" "}
-            <span className="font-semibold text-brand-600">jogos</span>, de
-            ferramentas <span className="font-semibold text-brand-600">úteis</span>{" "}
-            ao <span className="font-semibold text-brand-600">social</span>.
-            Escolha uma categoria e mergulhe.
+            <span className="text-brand-600">RONYCODE</span> — 2026
           </motion.p>
 
           <motion.div

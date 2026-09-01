@@ -64,7 +64,7 @@ export const categorias: Categoria[] = [
       {
         nome: "Tabela Periódica",
         descricao: "Uma tabela periódica interativa.",
-        imagem: "/apps/estudos-2.jpg",
+        imagem: "/apps/tabela-periodica.jpg",
         link: "/RONYCODE/Estudos/tabelaperiodica(03)/index.html",
       },
       {
@@ -109,13 +109,13 @@ export const categorias: Categoria[] = [
       {
         nome: "Roleta da Fortuna",
         descricao: "Treinamento para a sorte",
-        imagem: "/apps/jogos-1.jpg",
+        imagem: "/apps/roleta-fortuna.jpg",
         link: "/RONYCODE/Jogos/rodafortuna(02)/index.html",
       },
       {
         nome: "Jogo dos países",
         descricao: "Um jogo para governantes.",
-        imagem: "/apps/jogos-2.jpg",
+        imagem: "/apps/jogo-paises.jpg",
         link: "/RONYCODE/Jogos/jogopaises(01)/index.html",
       },
       {
@@ -136,13 +136,13 @@ export const categorias: Categoria[] = [
       {
         nome: "Sons dos animais",
         descricao: "Ouça o som desses animais.",
-        imagem: "/apps/uteis-1.jpg",
+        imagem: "/apps/sons-animais.jpg",
         link: "/RONYCODE/Úteis/Sons(01)/fauna.html",
       },
       {
         nome: "Encurtador de Link",
         descricao: "Diminua seu link rapidamente.",
-        imagem: "/apps/uteis-2.jpg",
+        imagem: "/apps/encurtador-link.jpg",
         link: "/RONYCODE/Úteis/diminuilink(02)/index.html",
       },
       {
