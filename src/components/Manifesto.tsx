@@ -1,12 +1,7 @@
 import { motion } from "framer-motion";
-import { Code2, Gauge, RefreshCw } from "lucide-react";
+import { Gauge, RefreshCw } from "lucide-react";
 
 const pilares = [
-  {
-    Icone: Code2,
-    titulo: "Feito à mão",
-    texto: "Cada app é desenhado e codado do zero — nada de templates prontos.",
-  },
   {
     Icone: Gauge,
     titulo: "Leve e rápido",
@@ -78,7 +73,7 @@ export default function Manifesto() {
           pelas categorias abaixo e abra o que fizer sentido pra você.
         </motion.p>
 
-        <div className="mt-16 grid gap-px overflow-hidden rounded-[1.75rem] bg-ink/10 ring-1 ring-ink/10 md:mt-20 md:grid-cols-3">
+        <div className="mt-16 grid gap-px overflow-hidden rounded-[1.75rem] bg-ink/10 ring-1 ring-ink/10 md:mt-20 md:grid-cols-2">
           {pilares.map((p, i) => (
             <motion.div
               key={p.titulo}
