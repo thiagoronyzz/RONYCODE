@@ -33,7 +33,7 @@
   button{font:inherit; color:inherit}
 
   /* ---------- HUD ---------- */
-  #hud{position:fixed; inset:0; pointer-events:none; z-index:6}
+  #hud{position:fixed; inset:0; pointer-events:none; z-index:12; display:block}
   #crosshair{
     position:absolute; left:50%; top:50%; width:20px; height:20px; transform:translate(-50%,-50%);
     opacity:.9; mix-blend-mode:difference;
@@ -1192,7 +1192,8 @@ function genChunk(ch) {
     const wx = x0 + dx, wz = z0 + dz, ci = ciOf(wx, wz), gy = ci.h;
     if (gy < SEA) continue;
     const r = hash3(wx, 0, wz, s + 1234);
-    const p = ci.biome === BIOME.FOREST ? .055 : ci.biome === BIOME.PLAINS ? .011 : ci.biome === BIOME.SNOW ? .03 : ci.biome === BIOME.MOUNTAIN ? .008 : .004;
+    /* densidade de árvores: florestas bem arborizadas, campos mais abertos */
+    const p = ci.biome === BIOME.FOREST ? .075 : ci.biome === BIOME.PLAINS ? .016 : ci.biome === BIOME.SNOW ? .04 : ci.biome === BIOME.MOUNTAIN ? .01 : .004;
     if (ci.biome === BIOME.DESERT) {
       if (r < .012) { const hh = 1 + ((hash3(wx, 1, wz, s) * 3) | 0); for (let y = 1; y <= hh; y++) put(wx, gy + y, wz, B.cactus, true); }
       continue;
@@ -1205,13 +1206,18 @@ function genChunk(ch) {
       }
       continue;
     }
-    /* árvore: checa espaçamento local */
-    let near = false;
-    for (let a = -2; a <= 2 && !near; a++) for (let b = -2; b <= 2 && !near; b++) {
+    /* árvore: escolhe um vencedor local. Antes, duas árvores candidatas
+       próximas eliminavam uma à outra; agora só a de menor hash sobrevive,
+       garantindo árvores sem sobreposição e sem "sumir" com a floresta. */
+    let blocked = false;
+    for (let a = -2; a <= 2 && !blocked; a++) for (let b = -2; b <= 2 && !blocked; b++) {
       if (a === 0 && b === 0) continue;
-      if (hash3(wx + a, 0, wz + b, s + 1234) < (ci.biome === BIOME.FOREST ? .055 : .011)) near = true;
+      const nci = ciOf(wx + a, wz + b);
+      const np = nci.biome === BIOME.FOREST ? .075 : nci.biome === BIOME.PLAINS ? .016 : nci.biome === BIOME.SNOW ? .04 : nci.biome === BIOME.MOUNTAIN ? .01 : .004;
+      const nr = hash3(wx + a, 0, wz + b, s + 1234);
+      if (nr < np && nr < r) blocked = true;
     }
-    if (near) continue;
+    if (blocked) continue;
     const kind = ci.biome === BIOME.SNOW || ci.biome === BIOME.MOUNTAIN ? 2 : ci.biome === BIOME.FOREST && hash3(wx, 3, wz, s) < .28 ? 1 : 0;
     const logId = [B.oaklog, B.birchlog, B.sprucelog][kind], leafId = [B.oakleaves, B.birchleaves, B.spruceleaves][kind];
     const th = 4 + ((hash3(wx, 5, wz, s + 2) * (kind === 2 ? 4 : 2.4)) | 0);
@@ -2046,9 +2052,14 @@ function moveAxis(axis, amt) {
   return false;
 }
 function landFall() {
-  const v = -Player.velPrevY;
+  /* Dano por DISTÂNCIA caída, não pela velocidade. Assim um pulo normal
+     (cerca de 1 bloco) nunca causa dano; o dano começa após ~3 blocos. */
+  const dist = Player.fallStart === null ? 0 : Math.max(0, Player.fallStart - Player.pos.y);
   Player.fallStart = null;
-  if (v > 8 && !Player.fly && !Player.inWater) { damage(Math.min(20, (v - 8) * .9), 'fall'); particles.spawn(Player.pos.x, Player.pos.y + .1, Player.pos.z, 0xdedede, 8, 2, .4); }
+  if (dist > 3.25 && !Player.fly && !Player.inWater) {
+    damage(Math.min(20, (dist - 3.25) * 1.05), 'fall');
+    particles.spawn(Player.pos.x, Player.pos.y + .1, Player.pos.z, 0xdedede, 8, 2, .4);
+  }
 }
 function updatePlayer(dt) {
   const K = Keys, p = Player.pos, v = Player.vel;
@@ -2583,6 +2594,7 @@ const UI = {
   tiles: { full: ATLAS.T('heart_full'), half: ATLAS.T('heart_half'), empty: ATLAS.T('heart_empty') },
   init() {
     const hb = $('hotbar');
+    hb.innerHTML = '';
     for (let i = 0; i < 9; i++) {
       const el = document.createElement('div');
       el.className = 'slot'; el.dataset.list = 'hot'; el.dataset.i = i;
@@ -2682,11 +2694,11 @@ const UI = {
     }
     const def0 = totalDefense();
     const showArmor = def0 > 0 || INV.armor.some((s) => s);
-    const armorBar = this.armor.parentElement || this.armor;
+    const armorBar = this.armor;
     if (armorBar) armorBar.style.display = showArmor ? 'flex' : 'none';
     if (showArmor) for (let i = 0; i < 10; i++) { const v = clamp(Math.ceil(def0 * 10) - i, 0, 1); drawTileOn(this.armor.children[i].getContext('2d'), v ? ATLAS.T('armor_full') : ATLAS.T('armor_empty'), 24); }
     const underwater = Player.air < 10;
-    const breathBar = this.breath.parentElement || this.breath;
+    const breathBar = this.breath;
     if (breathBar) breathBar.style.display = underwater ? 'flex' : 'none';
     if (underwater) for (let i = 0; i < 10; i++) { const v = clamp(Math.ceil(Player.air) - i, 0, 1); drawTileOn(this.breath.children[i].getContext('2d'), v ? ATLAS.T('bubble_full') : ATLAS.T('bubble_empty'), 24); }
     $('xpfill').style.width = clamp(st.cur / st.need, 0, 1) * 100 + '%';
@@ -4119,7 +4131,7 @@ function mainMenu() {
     startWorld(seed, $('modeIn').value, +rdIn.value, +fovIn.value, volIn.value / 100, 'mundo-' + (s || seed));
   };
   const bc = $('bCont');
-  if (bc) bc.onclick = () => { if (loadWorld(lastName)) { Game.running = true; Game.paused = false; closeVeil(); $('hud').classList.remove('hidden'); requestLock(); } else toast('Save não encontrado', 'bad'); };
+  if (bc) bc.onclick = () => { if (loadWorld(lastName)) { Game.running = true; Game.paused = false; closeVeil(); $('hud').classList.remove('hidden'); $('hud').style.display = 'block'; requestLock(); } else toast('Save não encontrado', 'bad'); };
 }
 function aboutHtml() {
   const on = ['Mundo procedural infinito (chunks 16×96, Perlin multicamada: continentalidade, erosão, picos e vales)',
