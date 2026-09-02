@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Cubia: sandbox voxel de sobrevivência em mundo procedural infinito, com mineração, crafting, construção, mobs e ciclo dia-noite — tudo em um único arquivo HTML." />
-<title>Cubia — mundo voxel infinito</title>
+<meta name="description" content="TRcraft: sandbox voxel de sobrevivência em mundo procedural infinito, com mineração, crafting, construção, mobs e ciclo dia-noite — tudo em um único arquivo HTML." />
+<title>TRcraft — mundo voxel infinito</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 <link rel="preconnect" href="https://unpkg.com" />
 <style>
@@ -272,7 +272,7 @@
 <div id="boot">
   <div>
     <div class="spin"></div>
-    <h1 style="margin:0 0 8px;font-size:1.5rem;letter-spacing:-.01em">Cubia</h1>
+    <h1 style="margin:0 0 8px;font-size:1.5rem;letter-spacing:-.01em">TRcraft</h1>
     <p id="bootMsg">Gerando texturas 16×16 e carregando o motor voxel…</p>
   </div>
 </div>
@@ -282,7 +282,7 @@
     <p class="eyebrow">Motor gráfico indisponível</p>
     <h1>Não foi possível iniciar o WebGL</h1>
     <p id="fatalMsg"></p>
-    <p>Cubia precisa da biblioteca three.js (carregada por CDN) e de um navegador com WebGL. Verifique a conexão com
+    <p>TRcraft precisa da biblioteca three.js (carregada por CDN) e de um navegador com WebGL. Verifique a conexão com
       <code>cdn.jsdelivr.net</code> ou <code>unpkg.com</code> e atualize a página. Se estiver em um navegador muito antigo,
       tente o Chrome, Edge ou Firefox atualizados.</p>
   </div>
@@ -3896,7 +3896,7 @@ function toast(msg, kind) {
   const box = $('toasts');
   const el = document.createElement('div');
   el.className = 'toast' + (kind === 'bad' ? ' bad' : '');
-  el.innerHTML = '<b>' + (kind === 'bad' ? 'Aviso' : 'Cubia') + '</b><span>' + msg + '</span>';
+  el.innerHTML = '<b>' + (kind === 'bad' ? 'Aviso' : 'TRcraft') + '</b><span>' + msg + '</span>';
   box.appendChild(el);
   setTimeout(() => { el.style.transition = 'opacity .4s, transform .4s'; el.style.opacity = 0; el.style.transform = 'translateX(16px)'; setTimeout(() => el.remove(), 420); }, 3400);
   while (box.children.length > 4) box.firstChild.remove();
@@ -4074,7 +4074,7 @@ function renderDebug() {
   let meshes = 0, tris = 0;
   for (const c of world.chunks.values()) if (c.mesh) { meshes++; tris += c.mesh.geometry.index ? c.mesh.geometry.index.count / 3 : 0; }
   $('debug').innerHTML =
-    '<b>Cubia</b> ' + (fps | 0) + ' fps · ' + fmt(1000 / (fps || 1), 0) + ' ms\n' +
+    '<b>TRcraft</b> ' + (fps | 0) + ' fps · ' + fmt(1000 / (fps || 1), 0) + ' ms\n' +
     'XYZ  ' + fmt(p.x, 2) + ' ' + fmt(p.y, 2) + ' ' + fmt(p.z, 2) + '\n' +
     'Chunk ' + Math.floor(p.x / CH) + ', ' + Math.floor(p.z / CH) + '  ·  bloco ' + Math.floor(p.x) + ' ' + Math.floor(p.y) + ' ' + Math.floor(p.z) + '\n' +
     'Bioma: ' + BNAME[bi2] + '   ·   semente ' + Game.seed + '\n' +
@@ -4190,7 +4190,7 @@ function mainMenu() {
   const html =
     '<div class="panel panel--wide">' +
     '<p class="eyebrow">Sandbox voxel de sobrevivência · arquivo único</p>' +
-    '<h1>Cubia</h1>' +
+    '<h1>TRcraft</h1>' +
     '<p class="lead">Mundo procedural infinito, mineração por dureza, crafting 2×2 e 3×3, fornalha, construção, ' +
     'mobs que nascem no escuro, fome, XP, encantamentos e ciclo dia-noite de 20 minutos. Tudo em um só HTML.</p>' +
     '<div class="cols"><div>' +
@@ -4285,7 +4285,7 @@ function startWorld(seed, mode, rd, fov, vol, name) {
   UI.syncHotbar(); UI.syncVitals();
   localStorage.setItem('cubia:last', name);
   Sound.resume();
-  toast('Bem-vindo a Cubia · seed ' + seed + ' · ' + (mode[0].toUpperCase() + mode.slice(1)));
+  toast('Bem-vindo a TRcraft · seed ' + seed + ' · ' + (mode[0].toUpperCase() + mode.slice(1)));
   toast('F3 mostra o painel de depuração · E abre a criação', 'bad');
   requestLock();
   markDirtySave();
