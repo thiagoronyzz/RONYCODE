@@ -115,6 +115,18 @@ export const categorias: Categoria[] = [
         imagem: "/apps/estudos-learncss.jpg",
         link: "/RONYCODE/Estudos/learncss(11)/index.html",
       },
+      {
+        nome: "Sistema Solar 3D",
+        descricao: "Simulador do Sistema Solar: viaje entre os planetas, acelere o tempo e veja rotação e translação em escala.",
+        imagem: "/apps/estudos-sistemasolar.jpg",
+        link: "/RONYCODE/Estudos/sistemasols(12)/index.html",
+      },
+      {
+        nome: "CSS Paint Studio",
+        descricao: "Desenhe na folha, escolha as ferramentas e aprenda vendo o CSS que dá forma a cada traço.",
+        imagem: "/apps/estudos-paintcss.jpg",
+        link: "/RONYCODE/Estudos/paintcss(13)/index.html",
+      },
     ],
   },
   {
@@ -166,6 +178,12 @@ export const categorias: Categoria[] = [
         imagem: "/apps/jogos-ifoodrider.jpg",
         link: "/RONYCODE/Jogos/ifoodrunner(07)/index.html",
       },
+      {
+        nome: "RUN ATACK",
+        descricao: "Tower defense por ondas: posicione torres no caminho, melhore o arsenal e proteja sua base dos invasores.",
+        imagem: "/apps/jogos-torresk.jpg",
+        link: "/RONYCODE/Jogos/torresk(08)/index.html",
+      },
     ],
   },
   {
@@ -204,6 +222,24 @@ export const categorias: Categoria[] = [
         descricao: "Crie, personalize e copie gradientes CSS modernos com várias cores e ângulo ajustável.",
         imagem: "/apps/uteis-gradiente.jpg",
         link: "/RONYCODE/Úteis/cssatual(05)/index.html",
+      },
+      {
+        nome: "Editzz",
+        descricao: "Editor de imagens completo no navegador: filtros, ajustes finos, recorte e exportação em alta qualidade.",
+        imagem: "/apps/uteis-editzz.jpg",
+        link: "/RONYCODE/Úteis/editzz(06)/index.html",
+      },
+      {
+        nome: "Dáctilo",
+        descricao: "Treino de digitação com textos cronometrados, precisão, palavras por minuto e evolução a cada teste.",
+        imagem: "/apps/uteis-escreve.jpg",
+        link: "/RONYCODE/Úteis/escreve(07)/index.html",
+      },
+      {
+        nome: "Escultor 3D",
+        descricao: "Estúdio de escultura digital: modele, pinte e exporte sua peça pronta para impressão 3D.",
+        imagem: "/apps/uteis-modelador3d.jpg",
+        link: "/RONYCODE/Úteis/modelador3d(08)/index.html",
       },
     ],
   },
