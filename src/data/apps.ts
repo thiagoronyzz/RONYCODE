@@ -220,18 +220,6 @@ export const categorias: Categoria[] = [
         imagem: "/apps/social-1.jpg",
         link: "shorturl.sh/romanov",
       },
-      {
-        nome: "Meus Links",
-        descricao: "Todos os meus perfis e redes sociais em uma página só.",
-        imagem: "/apps/social-2.jpg",
-        link: "#",
-      },
-      {
-        nome: "Comenta Aí",
-        descricao: "Mural aberto para deixar recados e sugestões de apps.",
-        imagem: "",
-        link: "#",
-      },
     ],
   },
 ];

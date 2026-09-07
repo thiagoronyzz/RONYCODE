@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { CloudOff, Rocket, Smartphone, Zap } from "lucide-react";
 import { BotaoBaixarApp } from "./InstallApp";
+import { usePwaInstall } from "../hooks/usePwaInstall";
 
 const beneficios = [
   {
@@ -21,6 +22,11 @@ const beneficios = [
 ];
 
 export default function DownloadSection() {
+  const { instalado } = usePwaInstall();
+
+  // quem já instalou o app não precisa ver o convite de instalação
+  if (instalado) return null;
+
   return (
     <section id="baixar" className="relative overflow-hidden bg-paper py-20 md:py-28">
       <div className="absolute -left-24 top-10 size-[26rem] rounded-full bg-brand-200/40 blur-[130px]" />

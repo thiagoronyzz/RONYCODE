@@ -61,18 +61,6 @@ export default function Manifesto() {
           ))}
         </h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          className="mt-8 max-w-xl text-base leading-relaxed text-ink/60 md:text-lg"
-        >
-          A RONYCODE é o meu laboratório público: uma coleção viva de
-          experimentos, ferramentas e jogos em constante evolução. Navegue
-          pelas categorias abaixo e abra o que fizer sentido pra você.
-        </motion.p>
-
         <div className="mt-16 grid gap-px overflow-hidden rounded-[1.75rem] bg-ink/10 ring-1 ring-ink/10 md:mt-20 md:grid-cols-2">
           {pilares.map((p, i) => (
             <motion.div
