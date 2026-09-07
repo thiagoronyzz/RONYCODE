@@ -23,6 +23,24 @@ function detectarPlataforma(): Plataforma {
  * guarda o evento beforeinstallprompt, sabe se já está instalado
  * e expõe uma função para disparar a instalação.
  */
+const CHAVE_INSTALADO = "ronycode:instalado";
+
+function marcarInstalado() {
+  try {
+    localStorage.setItem(CHAVE_INSTALADO, "1");
+  } catch {
+    /* modo privado / storage bloqueado */
+  }
+}
+
+function jaMarcadoInstalado() {
+  try {
+    return localStorage.getItem(CHAVE_INSTALADO) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function usePwaInstall() {
   const [evento, setEvento] = useState<BeforeInstallPromptEvent | null>(null);
   const [instalado, setInstalado] = useState(false);
@@ -33,15 +51,35 @@ export function usePwaInstall() {
 
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
+      window.matchMedia("(display-mode: minimal-ui)").matches ||
+      window.matchMedia("(display-mode: fullscreen)").matches ||
       // Safari iOS
       (window.navigator as unknown as { standalone?: boolean }).standalone === true;
-    setInstalado(standalone);
+
+    if (standalone) marcarInstalado();
+
+    // já instalado agora, ou instalado antes neste navegador
+    setInstalado(standalone || jaMarcadoInstalado());
+
+    // Chrome/Android: pergunta ao sistema se o app já está instalado
+    const nav = navigator as Navigator & {
+      getInstalledRelatedApps?: () => Promise<unknown[]>;
+    };
+    nav.getInstalledRelatedApps?.()
+      .then((apps) => {
+        if (apps && apps.length > 0) {
+          marcarInstalado();
+          setInstalado(true);
+        }
+      })
+      .catch(() => undefined);
 
     const aoPoderInstalar = (e: Event) => {
       e.preventDefault();
       setEvento(e as BeforeInstallPromptEvent);
     };
     const aoInstalar = () => {
+      marcarInstalado();
       setInstalado(true);
       setEvento(null);
     };
@@ -58,7 +96,10 @@ export function usePwaInstall() {
     if (!evento) return "indisponivel" as const;
     await evento.prompt();
     const { outcome } = await evento.userChoice;
-    if (outcome === "accepted") setInstalado(true);
+    if (outcome === "accepted") {
+      marcarInstalado();
+      setInstalado(true);
+    }
     setEvento(null);
     return outcome;
   }, [evento]);
