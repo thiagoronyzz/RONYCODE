@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Paint Studio - Pro</title>
+    <style>
+        /* =========================================
+           VARIÁVEIS DE CORES E ESTILOS
+           ========================================= */
+        :root {
+            --bg-body: linear-gradient(135deg, #eef3fc 0%, #e3ecfa 100%);
+            --bg-card: #ffffff;
+            --text-title: #1a1f36;
+            --text-subtitle: #6b7280;
+            --text-overline: #2563eb;
+            --btn-primary-bg: #2563eb;
+            --btn-primary-hover: #1d4ed8;
+            --btn-secondary-border: #d1d5db;
+            --btn-secondary-text: #1d4ed8;
+            --border-color: #e5e7eb;
+            --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-body);
+            color: var(--text-title);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* CABEÇALHO */
+        header {
+            width: 100%;
+            max-width: 1250px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .header-text .overline {
+            color: var(--text-overline);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .header-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            margin-bottom: 0.5rem;
+            color: #111827;
+        }
+
+        .header-text p {
+            color: var(--text-subtitle);
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+
+        .tip-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            max-width: 320px;
+        }
+
+        .tip-card h3 {
+            color: var(--text-overline);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tip-card p {
+            color: var(--text-subtitle);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* LAYOUT PRINCIPAL */
+        main {
+            width: 100%;
+            max-width: 1250px;
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            margin-bottom: 1.2rem;
+        }
+
+        .card-header .overline {
+            color: var(--text-overline);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-title);
+        }
+
+        /* CONTROLES */
+        .control-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--btn-primary-bg);
+            margin-top: 5px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--btn-primary-bg);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--btn-primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--btn-secondary-text);
+            border: 1px solid var(--btn-secondary-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--btn-secondary-text);
+            background-color: #f8fafc;
+        }
+
+        .btn-active {
+            background-color: var(--text-title);
+            color: white;
+            border-color: var(--text-title);
+        }
+
+        .btn-danger {
+            color: #ef4444;
+            border-color: #fca5a5;
+        }
+        .btn-danger:hover {
+            background-color: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-box h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-title);
+        }
+
+        .info-box ul {
+            padding-left: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--text-subtitle);
+        }
+        
+        .info-box ul li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* CANVAS E OUTPUT */
+        .canvas-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            background-image: 
+                linear-gradient(45deg, #f3f4f6 25%, transparent 25%), 
+                linear-gradient(-45deg, #f3f4f6 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #f3f4f6 75%), 
+                linear-gradient(-45deg, transparent 75%, #f3f4f6 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            margin-bottom: 1rem;
+            cursor: crosshair;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 450px;
+            touch-action: none;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+            background-color: #f8fafc;
+            color: #334155;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-text">
+            <span class="overline">FERRAMENTA DE CRIAÇÃO WEB</span>
+            <h1>CSS Paint Pro</h1>
+            <p>Desenhe com correção automática de falhas, use formas geométricas e gere o código CSS exato com fundo transparente.</p>
+        </div>
+        <div class="tip-card">
+            <h3>Dica Acadêmica</h3>
+            <p>O lápis usa um algoritmo de <strong>Curvas de Bézier Quadráticas</strong>. Isso significa que ele lê os pontos do seu mouse e suaviza matematicamente qualquer tremulação da sua mão.</p>
+        </div>
+    </header>
+
+    <main>
+        <!-- PAINEL ESQUERDO: CONTROLES -->
+        <aside class="card">
+            <div class="card-header">
+                <span class="overline">ENTRADA</span>
+                <h2>Ferramentas</h2>
+            </div>
+
+            <div class="flex-row">
+                <div class="control-group" style="flex: 1;">
+                    <label for="colorPicker">Cor</label>
+                    <input type="color" id="colorPicker" value="#2563eb">
+                </div>
+                <div class="control-group" style="flex: 2;">
+                    <label for="lineWidth">Espessura: <span id="lineWidthValue">5px</span></label>
+                    <input type="range" id="lineWidth" min="1" max="50" value="5">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Pincéis livres</label>
+                <div class="btn-group">
+                    <button class="btn-secondary btn-active" data-tool="pencil">Lápis (Suave)</button>
+                    <button class="btn-secondary" data-tool="eraser">Borracha</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Formas Geométricas</label>
+                <div class="btn-group">
+                    <button class="btn-secondary" data-tool="line">Linha</button>
+                    <button class="btn-secondary" data-tool="rect">Retângulo</button>
+                    <button class="btn-secondary" data-tool="circle">Círculo</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>Ações</label>
+                <div class="btn-group">
+                    <button id="btnUndo" class="btn-secondary">↶ Desfazer</button>
+                    <button id="btnRedo" class="btn-secondary">↷ Refazer</button>
+                    <button id="btnClear" class="btn-secondary btn-danger">🗑 Limpar</button>
+                </div>
+            </div>
+            
+        </aside>
+
+        <!-- PAINEL DIREITO: VISUALIZAÇÃO -->
+        <section class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span class="overline">VISUALIZAÇÃO</span>
+                    <h2>Folha de Desenho</h2>
+                </div>
+                <button id="btnGenerate" class="btn-primary">Gerar Código CSS</button>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="drawingCanvas"></canvas>
+            </div>
+
+            <div class="output-container">
+                <label style="font-weight: 600; font-size: 0.9rem;">Código CSS Gerado:</label>
+                <textarea id="cssOutput" readonly placeholder="Clique em 'Gerar Código CSS' para visualizar o resultado aqui..."></textarea>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // =========================================
+        // CONFIGURAÇÃO INICIAL DO CANVAS
+        // =========================================
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Elementos de UI
+        const colorPicker = document.getElementById('colorPicker');
+        const lineWidth = document.getElementById('lineWidth');
+        const lineWidthValue = document.getElementById('lineWidthValue');
+        const toolButtons = document.querySelectorAll('[data-tool]');
+        const cssOutput = document.getElementById('cssOutput');
+
+        // Estado do Aplicativo
+        let isDrawing = false;
+        let currentTool = 'pencil';
+        let startX, startY;
+        let snapshot; // Guarda a imagem para criar formas dinamicamente
+        
+        // Variáveis para suavização do lápis (Bézier)
+        let points = []; 
+
+        // Sistema de Histórico (Undo/Redo)
+        let undoStack = [];
+        let redoStack = [];
+        const MAX_HISTORY = 20;
+
+        // Ajuste de Resolução
+        function initCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = 450;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            saveState(); // Salva o estado inicial (em branco)
+        }
+        window.addEventListener('load', initCanvas);
+
+        // =========================================
+        // SISTEMA DE HISTÓRICO (DESFAZER/REFAZER)
+        // =========================================
+        function saveState() {
+            if (undoStack.length >= MAX_HISTORY) undoStack.shift();
+            undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+            redoStack = []; // Limpa o refazer ao criar uma nova ação
+        }
+
+        function restoreState(imageData) {
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        document.getElementById('btnUndo').addEventListener('click', () => {
+            if (undoStack.length > 1) {
+                redoStack.push(undoStack.pop());
+                restoreState(undoStack[undoStack.length - 1]);
+            }
+        });
+
+        document.getElementById('btnRedo').addEventListener('click', () => {
+            if (redoStack.length > 0) {
+                const state = redoStack.pop();
+                undoStack.push(state);
+                restoreState(state);
+            }
+        });
+
+        document.getElementById('btnClear').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            saveState();
+            cssOutput.value = "";
+        });
+
+        // =========================================
+        // LÓGICA DE DESENHO
+        // =========================================
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function startDraw(e) {
+            e.preventDefault();
+            isDrawing = true;
+            const pos = getMousePos(e);
+            startX = pos.x;
+            startY = pos.y;
+            
+            // Salva a tela atual para usar como base ao desenhar formas ou suavizar
+            snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            
+            if (currentTool === 'pencil') {
+                points = []; // Inicia array de pontos para o algoritmo de suavização
+                points.push({x: startX, y: startY});
+            }
+        }
+
+        function drawing(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const pos = getMousePos(e);
+
+            // Configurações do traço
+            ctx.lineWidth = lineWidth.value;
+            ctx.strokeStyle = currentTool === 'eraser' ? 'rgba(0,0,0,1)' : colorPicker.value;
+            ctx.fillStyle = colorPicker.value;
+            
+            if (currentTool === 'eraser') {
+                ctx.globalCompositeOperation = 'destination-out';
+                // Borracha age imediatamente sem curva para não dar conflito visual
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+                startX = pos.x;
+                startY = pos.y;
+                return;
+            } else {
+                ctx.globalCompositeOperation = 'source-over';
+                // Para lápis e formas, restauramos a tela para redesenhar dinamicamente
+                ctx.putImageData(snapshot, 0, 0);
+            }
+
+            if (currentTool === 'pencil') {
+                // Algoritmo de Suavização (Curvas de Bézier)
+                points.push({x: pos.x, y: pos.y});
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                
+                for (let i = 1; i < points.length - 1; i++) {
+                    const xc = (points[i].x + points[i + 1].x) / 2;
+                    const yc = (points[i].y + points[i + 1].y) / 2;
+                    ctx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+                }
+                
+                // Desenha a última linha até o cursor
+                ctx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+                ctx.stroke();
+            } 
+            else if (currentTool === 'line') {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            } 
+            else if (currentTool === 'rect') {
+                ctx.beginPath();
+                ctx.strokeRect(startX, startY, pos.x - startX, pos.y - startY);
+            } 
+            else if (currentTool === 'circle') {
+                ctx.beginPath();
+                let radius = Math.sqrt(Math.pow((pos.x - startX), 2) + Math.pow((pos.y - startY), 2));
+                ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+        }
+
+        function endDraw() {
+            if(!isDrawing) return;
+            isDrawing = false;
+            saveState(); // Salva no histórico quando termina de desenhar
+        }
+
+        // Listeners do Canvas
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', drawing);
+        canvas.addEventListener('mouseup', endDraw);
+        canvas.addEventListener('mouseout', endDraw);
+        
+        // Touch
+        canvas.addEventListener('touchstart', startDraw, {passive: false});
+        canvas.addEventListener('touchmove', drawing, {passive: false});
+        canvas.addEventListener('touchend', endDraw);
+
+        // =========================================
+        // CONTROLES DA INTERFACE
+        // =========================================
+        lineWidth.addEventListener('input', (e) => {
+            lineWidthValue.innerText = e.target.value + 'px';
+        });
+
+        toolButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active de todos
+                toolButtons.forEach(b => b.classList.remove('btn-active'));
+                // Adiciona no clicado
+                btn.classList.add('btn-active');
+                // Altera a ferramenta
+                currentTool = btn.dataset.tool;
+            });
+        });
+
+        // =========================================
+        // GERAÇÃO DO CÓDIGO CSS
+        // =========================================
+        document.getElementById('btnGenerate').addEventListener('click', function() {
+            const dataURL = canvas.toDataURL('image/png');
+            
+            // Checa se está vazio comparando com um canvas novo
+            const blank = document.createElement('canvas');
+            blank.width = canvas.width; blank.height = canvas.height;
+            if (dataURL === blank.toDataURL('image/png')) {
+                cssOutput.value = "/* A tela está em branco. Desenhe algo primeiro! */";
+                return;
+            }
+
+            const cssString = `/* === CÓDIGO DO SEU DESENHO === */
+/* Basta adicionar a classe '.meu-desenho' na sua div HTML */
+
+.meu-desenho {
+    width: ${canvas.width}px;
+    height: ${canvas.height}px;
+    background-image: url('${dataURL}');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}`;
+            cssOutput.value = cssString;
+            
+            // Efeito de sucesso
+            const originalText = this.innerText;
+            this.innerText = "✓ CSS Gerado!";
+            this.style.backgroundColor = "#10b981";
+            
+            setTimeout(() => {
+                this.innerText = originalText;
+                this.style.backgroundColor = "";
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editzz — Editor de Imagens Profissional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #141414;
+            --bg-hover: #1e1e1e;
+            --border: #222222;
+            --border-active: #333333;
+            --text-primary: #f0f0f0;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent: #e0e0e0;
+            --accent-bright: #ffffff;
+            --slider-track: #2a2a2a;
+            --slider-fill: #888888;
+            --danger: #ff4444;
+            --success: #44ff88;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            user-select: none;
+        }
+
+        /* HEADER */
+        .header {
+            height: 52px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #fff 0%, #666 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+
+        .logo-badge {
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 7px 16px;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-active);
+        }
+
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background: rgba(255, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 68, 68, 0.2);
+        }
+
+        /* MAIN LAYOUT */
+        .main-layout {
+            display: flex;
+            height: calc(100vh - 52px);
+        }
+
+        /* TOOLBAR LEFT */
+        .toolbar {
+            width: 52px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            gap: 2px;
+        }
+
+        .tool-btn {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 16px;
+            position: relative;
+        }
+
+        .tool-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+        }
+
+        .tool-btn.active {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .tool-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 16px;
+            background: var(--text-primary);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .tool-separator {
+            width: 24px;
+            height: 1px;
+            background: var(--border);
+            margin: 6px 0;
+        }
+
+        .tool-btn[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            border: 1px solid var(--border);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        /* CANVAS AREA */
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-primary);
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(30,30,30,0.5) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(20,20,20,0.5) 0%, transparent 50%);
+        }
+
+        .canvas-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        #mainCanvas {
+            max-width: 100%;
+            max-height: calc(100vh - 120px);
+            border-radius: 4px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        .canvas-info {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* CROP OVERLAY */
+        .crop-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            cursor: crosshair;
+            z-index: 50;
+        }
+
+        .crop-overlay.active {
+            display: block;
+        }
+
+        .crop-selection {
+            position: absolute;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+            display: none;
+        }
+
+        .crop-selection.visible {
+            display: block;
+        }
+
+        .crop-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .crop-handle.tl { top: -5px; left: -5px; cursor: nw-resize; }
+        .crop-handle.tr { top: -5px; right: -5px; cursor: ne-resize; }
+        .crop-handle.bl { bottom: -5px; left: -5px; cursor: sw-resize; }
+        .crop-handle.br { bottom: -5px; right: -5px; cursor: se-resize; }
+
+        /* DROP ZONE */
+        .drop-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.hidden {
+            display: none;
+        }
+
+        .drop-zone.dragging {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .drop-zone.dragging .drop-border {
+            border-color: var(--text-secondary);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .drop-border {
+            border: 2px dashed var(--border-active);
+            border-radius: 16px;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .drop-border:hover {
+            border-color: var(--text-muted);
+            background: rgba(255,255,255,0.01);
+        }
+
+        .drop-icon {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        .drop-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .drop-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .drop-btn {
+            margin-top: 8px;
+            padding: 10px 24px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-active);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .drop-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--text-muted);
+        }
+
+        /* SIDEBAR RIGHT */
+        .sidebar {
+            width: 300px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .sidebar-tab {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+        }
+
+        .sidebar-tab:hover {
+            color: var(--text-secondary);
+        }
+
+        .sidebar-tab.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--text-primary);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* CONTROLS */
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .control-group-title .reset-btn {
+            font-size: 9px;
+            color: var(--text-muted);
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .control-group-title .reset-btn:hover {
+            color: var(--text-secondary);
+            background: var(--bg-hover);
+        }
+
+        .slider-control {
+            margin-bottom: 14px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .slider-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .slider-value {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+            min-width: 32px;
+            text-align: right;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: var(--slider-track);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 8px rgba(255,255,255,0.2);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(1.1);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* FILTER PRESETS */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .filter-preset {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: var(--bg-tertiary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-preset:hover {
+            border-color: var(--border-active);
+            transform: translateY(-1px);
+        }
+
+        .filter-preset.active {
+            border-color: var(--text-primary);
+        }
+
+        .filter-preview {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 6px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .filter-name {
+            font-size: 9px;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            font-weight: 500;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* CROP PRESETS */
+        .crop-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .crop-preset-btn {
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .crop-preset-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-active);
+        }
+
+        .crop-preset-btn.active {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--text-muted);
+        }
+
+        /* TRANSFORM BUTTONS */
+        .transform-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        .transform-btn {
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .transform-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-active);
+        }
+
+        .transform-btn .icon {
+            font-size: 14px;
+        }
+
+        /* ZOOM CONTROLS */
+        .zoom-bar {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .zoom-bar button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .zoom-bar button:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .zoom-value {
+            font-size: 11px;
+            color: var(--text-muted);
+            min-width: 40px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* HISTORY BAR */
+        .history-bar {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 4px;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .history-bar button {
+            width: 32px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .history-bar button:hover:not(:disabled) {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .history-bar button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: var(--text-primary);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* HIDDEN */
+        #fileInput {
+            display: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 260px;
+            }
+
+            .toolbar {
+                width: 44px;
+            }
+
+            .drop-border {
+                padding: 40px;
+            }
+        }
+
+        /* CROP ACTION BAR */
+        .crop-actions {
+            display: none;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .crop-actions.active {
+            display: flex;
+        }
+
+        .crop-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* COMPARISON SLIDER */
+        .compare-toggle {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 10;
+        }
+
+        /* KEYBOARD HINT */
+        .shortcut {
+            font-size: 9px;
+            color: var(--text-muted);
+            background: var(--bg-primary);
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">E</div>
+            <span class="logo-text">Editzz</span>
+            <span class="logo-badge">Pro</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-ghost" onclick="openFile()" id="btnOpen">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Abrir
+            </button>
+            <button class="btn btn-ghost" onclick="resetAll()" id="btnReset" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                Resetar
+            </button>
+            <button class="btn btn-primary" onclick="downloadImage()" id="btnDownload" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Download
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+        <!-- LEFT TOOLBAR -->
+        <div class="toolbar">
+            <button class="tool-btn active" data-tooltip="Mover" data-tool="move" onclick="setTool('move')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>
+            </button>
+            <button class="tool-btn" data-tooltip="Cortar" data-tool="crop" onclick="setTool('crop')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.13 1L6 16a2 2 0 002 2h15"/><path d="M1 6.13L16 6a2 2 0 012 2v15"/></svg>
+            </button>
+            <div class="tool-separator"></div>
+            <button class="tool-btn" data-tooltip="Rotacionar" data-tool="rotate" onclick="rotateImage()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            </button>
+            <button class="tool-btn" data-tooltip="Espelhar H" onclick="flipH()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+            </button>
+            <button class="tool-btn" data-tooltip="Espelhar V" onclick="flipV()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+            </button>
+            <div class="tool-separator"></div>
+            <button class="tool-btn" data-tooltip="Redimensionar" onclick="showResize()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </button>
+        </div>
+
+        <!-- CANVAS AREA -->
+        <div class="canvas-area" id="canvasArea">
+            <!-- DROP ZONE -->
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-border" onclick="openFile()">
+                    <div class="drop-icon">📷</div>
+                    <div class="drop-title">Arraste uma imagem ou clique aqui</div>
+                    <div class="drop-subtitle">Suporta JPG, PNG, WebP, BMP, GIF</div>
+                    <button class="drop-btn" onclick="event.stopPropagation(); openFile()">Selecionar Arquivo</button>
+                </div>
+            </div>
+
+            <!-- CANVAS -->
+            <div class="canvas-container" id="canvasContainer">
+                <canvas id="mainCanvas"></canvas>
+                <div class="canvas-info" id="canvasInfo"></div>
+                <div class="crop-overlay" id="cropOverlay">
+                    <div class="crop-selection" id="cropSelection">
+                        <div class="crop-handle tl" data-handle="tl"></div>
+                        <div class="crop-handle tr" data-handle="tr"></div>
+                        <div class="crop-handle bl" data-handle="bl"></div>
+                        <div class="crop-handle br" data-handle="br"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTORY BAR -->
+            <div class="history-bar" id="historyBar" style="display:none">
+                <button onclick="undo()" id="undoBtn" disabled title="Desfazer (Ctrl+Z)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1014.85-3.36L1 10"/></svg>
+                </button>
+                <button onclick="redo()" id="redoBtn" disabled title="Refazer (Ctrl+Y)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                </button>
+            </div>
+
+            <!-- ZOOM BAR -->
+            <div class="zoom-bar" id="zoomBar" style="display:none">
+                <button onclick="zoomOut()">−</button>
+                <span class="zoom-value" id="zoomValue">100%</span>
+                <button onclick="zoomIn()">+</button>
+                <button onclick="zoomFit()" title="Ajustar">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-tabs">
+                <button class="sidebar-tab active" data-tab="adjust" onclick="switchTab('adjust')">Ajustes</button>
+                <button class="sidebar-tab" data-tab="filters" onclick="switchTab('filters')">Filtros</button>
+                <button class="sidebar-tab" data-tab="transform" onclick="switchTab('transform')">Transformar</button>
+            </div>
+            <div class="sidebar-content">
+                <!-- ADJUST TAB -->
+                <div class="tab-panel active" id="tab-adjust">
+                    <div class="control-group">
+                        <div class="control-group-title">
+                            Luz
+                            <button class="reset-btn" onclick="resetGroup('light')">Resetar</button>
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Brilho</span>
+                                <span class="slider-value" id="val-brightness">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="brightness" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Contraste</span>
+                                <span class="slider-value" id="val-contrast">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="contrast" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Exposição</span>
+                                <span class="slider-value" id="val-exposure">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="exposure" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Realces</span>
+                                <span class="slider-value" id="val-highlights">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="highlights" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Sombras</span>
+                                <span class="slider-value" id="val-shadows">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="shadows" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Gamma</span>
+                                <span class="slider-value" id="val-gamma">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="gamma" oninput="updateSlider(this)">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-group-title">
+                            Cor
+                            <button class="reset-btn" onclick="resetGroup('color')">Resetar</button>
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Saturação</span>
+                                <span class="slider-value" id="val-saturation">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="saturation" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Vibrance</span>
+                                <span class="slider-value" id="val-vibrance">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="vibrance" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Temperatura</span>
+                                <span class="slider-value" id="val-temperature">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="temperature" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Matiz</span>
+                                <span class="slider-value" id="val-tint">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="tint" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Hue Rotate</span>
+                                <span class="slider-value" id="val-hue">0°</span>
+                            </div>
+                            <input type="range" min="0" max="360" value="0" data-param="hue" oninput="updateSlider(this)">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-group-title">
+                            Detalhe
+                            <button class="reset-btn" onclick="resetGroup('detail')">Resetar</button>
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Nitidez</span>
+                                <span class="slider-value" id="val-sharpness">0</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="0" data-param="sharpness" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Clareza</span>
+                                <span class="slider-value" id="val-clarity">0</span>
+                            </div>
+                            <input type="range" min="-100" max="100" value="0" data-param="clarity" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Desfoque</span>
+                                <span class="slider-value" id="val-blur">0</span>
+                            </div>
+                            <input type="range" min="0" max="20" value="0" data-param="blur" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Ruído</span>
+                                <span class="slider-value" id="val-noise">0</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="0" data-param="noise" oninput="updateSlider(this)">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-group-title">
+                            Efeitos
+                            <button class="reset-btn" onclick="resetGroup('effects')">Resetar</button>
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Vinheta</span>
+                                <span class="slider-value" id="val-vignette">0</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="0" data-param="vignette" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Grain</span>
+                                <span class="slider-value" id="val-grain">0</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="0" data-param="grain" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Sépia</span>
+                                <span class="slider-value" id="val-sepia">0</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="0" data-param="sepia" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Fade</span>
+                                <span class="slider-value" id="val-fade">0</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="0" data-param="fade" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Posterizar</span>
+                                <span class="slider-value" id="val-posterize">0</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="0" data-param="posterize" oninput="updateSlider(this)">
+                        </div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Pixelar</span>
+                                <span class="slider-value" id="val-pixelate">0</span>
+                            </div>
+                            <input type="range" min="0" max="50" value="0" data-param="pixelate" oninput="updateSlider(this)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FILTERS TAB -->
+                <div class="tab-panel" id="tab-filters">
+                    <div class="control-group">
+                        <div class="control-group-title">Presets</div>
+                        <div class="filter-grid" id="filterGrid"></div>
+                    </div>
+                    <div class="slider-control">
+                        <div class="slider-header">
+                            <span class="slider-label">Intensidade do Filtro</span>
+                            <span class="slider-value" id="val-filterIntensity">100%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="100" data-param="filterIntensity" oninput="updateSlider(this)">
+                    </div>
+                </div>
+
+                <!-- TRANSFORM TAB -->
+                <div class="tab-panel" id="tab-transform">
+                    <div class="control-group">
+                        <div class="control-group-title">Corte</div>
+                        <div class="crop-presets">
+                            <button class="crop-preset-btn" onclick="setCropRatio('free')">Livre</button>
+                            <button class="crop-preset-btn" onclick="setCropRatio('1:1')">1:1</button>
+                            <button class="crop-preset-btn" onclick="setCropRatio('4:3')">4:3</button>
+                            <button class="crop-preset-btn" onclick="setCropRatio('16:9')">16:9</button>
+                            <button class="crop-preset-btn" onclick="setCropRatio('3:2')">3:2</button>
+                            <button class="crop-preset-btn" onclick="setCropRatio('9:16')">9:16</button>
+                            <button class="crop-preset-btn" onclick="setCropRatio('5:4')">5:4</button>
+                            <button class="crop-preset-btn" onclick="setCropRatio('21:9')">21:9</button>
+                        </div>
+                        <div class="crop-actions" id="cropActions">
+                            <button class="btn btn-primary" onclick="applyCrop()">✓ Aplicar Corte</button>
+                            <button class="btn btn-ghost" onclick="cancelCrop()">✕ Cancelar</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-group-title">Transformações</div>
+                        <div class="transform-grid">
+                            <button class="transform-btn" onclick="rotateImage()">
+                                <span class="icon">↻</span> Girar 90°
+                            </button>
+                            <button class="transform-btn" onclick="rotateImageCCW()">
+                                <span class="icon">↺</span> Girar -90°
+                            </button>
+                            <button class="transform-btn" onclick="flipH()">
+                                <span class="icon">↔</span> Espelhar H
+                            </button>
+                            <button class="transform-btn" onclick="flipV()">
+                                <span class="icon">↕</span> Espelhar V
+                            </button>
+                            <button class="transform-btn" onclick="rotateImage180()">
+                                <span class="icon">🔄</span> Girar 180°
+                            </button>
+                            <button class="transform-btn" onclick="showResize()">
+                                <span class="icon">⤡</span> Redimensionar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="control-group-title">Rotação Fina</div>
+                        <div class="slider-control">
+                            <div class="slider-header">
+                                <span class="slider-label">Ângulo</span>
+                                <span class="slider-value" id="val-rotation">0°</span>
+                            </div>
+                            <input type="range" min="-180" max="180" value="0" data-param="rotation" oninput="updateSlider(this)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification">
+        <span id="notifText"></span>
+    </div>
+
+    <!-- FILE INPUT -->
+    <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this.files[0])">
+
+    <script>
+    // ========================================
+    // STATE
+    // ========================================
+    let originalImage = null;
+    let currentCanvas = null;
+    let currentCtx = null;
+    let displayCanvas = null;
+    let displayCtx = null;
+    let zoom = 1;
+    let imageLoaded = false;
+    let currentTool = 'move';
+    let activeFilter = 'none';
+    let history = [];
+    let historyIndex = -1;
+    let isProcessing = false;
+    let renderTimeout = null;
+
+    const params = {
+        brightness: 0, contrast: 0, exposure: 0, highlights: 0,
+        shadows: 0, gamma: 0, saturation: 0, vibrance: 0,
+        temperature: 0, tint: 0, hue: 0, sharpness: 0,
+        clarity: 0, blur: 0, noise: 0, vignette: 0,
+        grain: 0, sepia: 0, fade: 0, posterize: 0,
+        pixelate: 0, rotation: 0, filterIntensity: 100
+    };
+
+    const defaultParams = { ...params };
+
+    // ========================================
+    // FILTER PRESETS
+    // ========================================
+    const filterPresets = {
+        'none': { name: 'Original', params: {} },
+        'vivid': { name: 'Vívido', params: { saturation: 40, contrast: 15, vibrance: 30 } },
+        'warm': { name: 'Quente', params: { temperature: 30, saturation: 10, brightness: 5 } },
+        'cool': { name: 'Frio', params: { temperature: -30, saturation: 5, contrast: 5 } },
+        'mono': { name: 'Mono', params: { saturation: -100, contrast: 15 } },
+        'noir': { name: 'Noir', params: { saturation: -100, contrast: 40, brightness: -10, vignette: 50 } },
+        'vintage': { name: 'Vintage', params: { sepia: 40, fade: 20, saturation: -20, contrast: 10, grain: 15 } },
+        'cinematic': { name: 'Cinema', params: { contrast: 20, temperature: -10, tint: 5, shadows: -15, vignette: 30 } },
+        'matte': { name: 'Matte', params: { fade: 30, contrast: -10, saturation: -15 } },
+        'dramatic': { name: 'Dramático', params: { contrast: 35, clarity: 30, saturation: 15, shadows: -20 } },
+        'sunset': { name: 'Pôr do Sol', params: { temperature: 45, saturation: 25, contrast: 10, brightness: 5 } },
+        'arctic': { name: 'Ártico', params: { temperature: -40, brightness: 10, saturation: -20, contrast: 5 } },
+        'faded': { name: 'Desbotado', params: { fade: 40, saturation: -30, brightness: 10, contrast: -15 } },
+        'chrome': { name: 'Chrome', params: { contrast: 25, saturation: -15, highlights: 20, shadows: 10 } },
+        'pop': { name: 'Pop', params: { saturation: 60, contrast: 30, vibrance: 40, brightness: 5 } },
+    };
+
+    // ========================================
+    // INIT
+    // ========================================
+    function init() {
+        displayCanvas = document.getElementById('mainCanvas');
+        displayCtx = displayCanvas.getContext('2d', { willReadFrequently: true });
+        setupDropZone();
+        setupKeyboard();
+        buildFilterGrid();
+    }
+
+    function setupDropZone() {
+        const area = document.getElementById('canvasArea');
+        const dz = document.getElementById('dropZone');
+
+        area.addEventListener('dragover', e => {
+            e.preventDefault();
+            dz.classList.add('dragging');
+        });
+        area.addEventListener('dragleave', () => dz.classList.remove('dragging'));
+        area.addEventListener('drop', e => {
+            e.preventDefault();
+            dz.classList.remove('dragging');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) handleFile(file);
+        });
+    }
+
+    function setupKeyboard() {
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
+            if (e.ctrlKey && e.key === 'y') { e.preventDefault(); redo(); }
+            if (e.ctrlKey && e.key === 's') { e.preventDefault(); downloadImage(); }
+            if (e.ctrlKey && e.key === 'o') { e.preventDefault(); openFile(); }
+        });
+    }
+
+    function buildFilterGrid() {
+        const grid = document.getElementById('filterGrid');
+        grid.innerHTML = '';
+        Object.entries(filterPresets).forEach(([key, preset]) => {
+            const div = document.createElement('div');
+            div.className = `filter-preset ${key === activeFilter ? 'active' : ''}`;
+            div.onclick = () => applyFilterPreset(key);
+            div.innerHTML = `<span class="filter-name">${preset.name}</span>`;
+            div.dataset.filter = key;
+            grid.appendChild(div);
+        });
+    }
+
+    // ========================================
+    // FILE HANDLING
+    // ========================================
+    function openFile() {
+        document.getElementById('fileInput').click();
+    }
+
+    function handleFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                loadImage(img);
+                notify(`✓ ${file.name} carregado (${img.width}×${img.height})`);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function loadImage(img) {
+        currentCanvas = document.createElement('canvas');
+        currentCtx = currentCanvas.getContext('2d', { willReadFrequently: true });
+        currentCanvas.width = img.width;
+        currentCanvas.height = img.height;
+        currentCtx.drawImage(img, 0, 0);
+
+        originalImage = document.createElement('canvas');
+        const origCtx = originalImage.getContext('2d');
+        originalImage.width = img.width;
+        originalImage.height = img.height;
+        origCtx.drawImage(img, 0, 0);
+
+        imageLoaded = true;
+        resetParams();
+        history = [];
+        historyIndex = -1;
+        saveHistory();
+
+        document.getElementById('dropZone').classList.add('hidden');
+        displayCanvas.style.display = 'block';
+        document.getElementById('historyBar').style.display = 'flex';
+        document.getElementById('zoomBar').style.display = 'flex';
+        document.getElementById('btnDownload').disabled = false;
+        document.getElementById('btnReset').disabled = false;
+
+        zoomFit();
+        renderImage();
+    }
+
+    // ========================================
+    // RENDERING ENGINE
+    // ========================================
+    function updateSlider(el) {
+        const param = el.dataset.param;
+        const val = parseFloat(el.value);
+        params[param] = val;
+
+        const valEl = document.getElementById(`val-${param}`);
+        if (valEl) {
+            if (param === 'hue') valEl.textContent = val + '°';
+            else if (param === 'filterIntensity') valEl.textContent = val + '%';
+            else if (param === 'rotation') valEl.textContent = val + '°';
+            else valEl.textContent = val;
+        }
+
+        scheduleRender();
+    }
+
+    function scheduleRender() {
+        if (renderTimeout) clearTimeout(renderTimeout);
+        renderTimeout = setTimeout(() => {
+            renderImage();
+            saveHistory();
+        }, 30);
+    }
+
+    function renderImage() {
+        if (!imageLoaded || !originalImage) return;
+
+        const src = originalImage;
+        const w = src.width;
+        const h = src.height;
+
+        // Handle pixelation
+        let workW = w, workH = h;
+        if (params.pixelate > 0) {
+            const factor = Math.max(1, Math.floor(params.pixelate));
+            workW = Math.max(1, Math.floor(w / factor));
+            workH = Math.max(1, Math.floor(h / factor));
+        }
+
+        // Create working canvas
+        const work = document.createElement('canvas');
+        const wctx = work.getContext('2d', { willReadFrequently: true });
+        work.width = workW;
+        work.height = workH;
+
+        // Draw source (possibly downscaled for pixelation)
+        wctx.imageSmoothingEnabled = params.pixelate > 0 ? false : true;
+        wctx.drawImage(src, 0, 0, workW, workH);
+
+        // Get image data
+        let imageData = wctx.getImageData(0, 0, workW, workH);
+        let data = imageData.data;
+
+        // Apply pixel-level adjustments
+        const brightness = params.brightness / 100;
+        const contrast = params.contrast / 100;
+        const exposure = params.exposure / 100;
+        const highlights = params.highlights / 100;
+        const shadows = params.shadows / 100;
+        const gamma = 1 - params.gamma / 200;
+        const saturation = params.saturation / 100;
+        const vibrance = params.vibrance / 100;
+        const temperature = params.temperature;
+        const tint = params.tint;
+        const hue = params.hue;
+        const sepia = params.sepia / 100;
+        const fade = params.fade / 100;
+        const posterize = params.posterize;
+        const noise = params.noise;
+        const grain = params.grain;
+
+        // Filter preset blending
+        const intensity = params.filterIntensity / 100;
+
+        for (let i = 0; i < data.length; i += 4) {
+            let r = data[i];
+            let g = data[i + 1];
+            let b = data[i + 2];
+
+            // Exposure
+            if (exposure !== 0) {
+                const expMul = Math.pow(2, exposure);
+                r *= expMul;
+                g *= expMul;
+                b *= expMul;
+            }
+
+            // Brightness
+            if (brightness !== 0) {
+                r += brightness * 255;
+                g += brightness * 255;
+                b += brightness * 255;
+            }
+
+            // Contrast
+            if (contrast !== 0) {
+                const factor = (259 * (contrast * 255 + 255)) / (255 * (259 - contrast * 255));
+                r = factor * (r - 128) + 128;
+                g = factor * (g - 128) + 128;
+                b = factor * (b - 128) + 128;
+            }
+
+            // Gamma
+            if (gamma !== 1) {
+                r = 255 * Math.pow(r / 255, gamma);
+                g = 255 * Math.pow(g / 255, gamma);
+                b = 255 * Math.pow(b / 255, gamma);
+            }
+
+            // Highlights & Shadows
+            if (highlights !== 0 || shadows !== 0) {
+                const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+                if (lum > 128 && highlights !== 0) {
+                    const t = (lum - 128) / 127;
+                    r += highlights * t * 60;
+                    g += highlights * t * 60;
+                    b += highlights * t * 60;
+                }
+                if (lum < 128 && shadows !== 0) {
+                    const t = (128 - lum) / 128;
+                    r += shadows * t * 60;
+                    g += shadows * t * 60;
+                    b += shadows * t * 60;
+                }
+            }
+
+            // Temperature
+            if (temperature !== 0) {
+                r += temperature * 0.5;
+                b -= temperature * 0.5;
+                g += temperature * 0.1;
+            }
+
+            // Tint
+            if (tint !== 0) {
+                g += tint * 0.5;
+                r += tint * 0.1;
+            }
+
+            // Saturation
+            if (saturation !== 0) {
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                const s = 1 + saturation;
+                r = gray + s * (r - gray);
+                g = gray + s * (g - gray);
+                b = gray + s * (b - gray);
+            }
+
+            // Vibrance
+            if (vibrance !== 0) {
+                const maxC = Math.max(r, g, b);
+                const avg = (r + g + b) / 3;
+                const amt = ((maxC - avg) / 255) * (-vibrance * 3);
+                r += (maxC - r) * amt;
+                g += (maxC - g) * amt;
+                b += (maxC - b) * amt;
+            }
+
+            // Hue rotate
+            if (hue !== 0) {
+                const [h2, s2, l2] = rgbToHsl(r, g, b);
+                const [nr, ng, nb] = hslToRgb((h2 + hue / 360) % 1, s2, l2);
+                r = nr; g = ng; b = nb;
+            }
+
+            // Sepia
+            if (sepia > 0) {
+                const tr = 0.393 * r + 0.769 * g + 0.189 * b;
+                const tg = 0.349 * r + 0.686 * g + 0.168 * b;
+                const tb = 0.272 * r + 0.534 * g + 0.131 * b;
+                r = r + (tr - r) * sepia;
+                g = g + (tg - g) * sepia;
+                b = b + (tb - b) * sepia;
+            }
+
+            // Fade
+            if (fade > 0) {
+                r = r + (128 - r) * fade * 0.5;
+                g = g + (128 - g) * fade * 0.5;
+                b = b + (128 - b) * fade * 0.5;
+            }
+
+            // Posterize
+            if (posterize > 0) {
+                const levels = Math.max(2, Math.floor(256 - posterize * 2.5));
+                r = Math.floor(r / (256 / levels)) * (256 / levels);
+                g = Math.floor(g / (256 / levels)) * (256 / levels);
+                b = Math.floor(b / (256 / levels)) * (256 / levels);
+            }
+
+            // Noise
+            if (noise > 0) {
+                const n = (Math.random() - 0.5) * noise * 2.55;
+                r += n; g += n; b += n;
+            }
+
+            // Grain (colored noise)
+            if (grain > 0) {
+                r += (Math.random() - 0.5) * grain * 1.5;
+                g += (Math.random() - 0.5) * grain * 1.5;
+                b += (Math.random() - 0.5) * grain * 1.5;
+            }
+
+            // Clamp
+            data[i] = Math.max(0, Math.min(255, r));
+            data[i + 1] = Math.max(0, Math.min(255, g));
+            data[i + 2] = Math.max(0, Math.min(255, b));
+        }
+
+        wctx.putImageData(imageData, 0, 0);
+
+        // Sharpness (unsharp mask)
+        if (params.sharpness > 0) {
+            applyUnsharpMask(wctx, workW, workH, params.sharpness / 100);
+        }
+
+        // Clarity (local contrast)
+        if (params.clarity !== 0) {
+            applyClarity(wctx, workW, workH, params.clarity / 100);
+        }
+
+        // Blur
+        if (params.blur > 0) {
+            wctx.filter = `blur(${params.blur}px)`;
+            wctx.drawImage(work, 0, 0);
+            wctx.filter = 'none';
+        }
+
+        // Now draw to final canvas at full resolution
+        currentCanvas.width = w;
+        currentCanvas.height = h;
+        currentCtx.imageSmoothingEnabled = params.pixelate > 0 ? false : true;
+        currentCtx.drawImage(work, 0, 0, w, h);
+
+        // Vignette
+        if (params.vignette > 0) {
+            const vignette = currentCtx.createRadialGradient(
+                w / 2, h / 2, Math.min(w, h) * 0.2,
+                w / 2, h / 2, Math.max(w, h) * 0.7
+            );
+            vignette.addColorStop(0, 'rgba(0,0,0,0)');
+            vignette.addColorStop(1, `rgba(0,0,0,${params.vignette / 100})`);
+            currentCtx.fillStyle = vignette;
+            currentCtx.fillRect(0, 0, w, h);
+        }
+
+        // Rotation
+        if (params.rotation !== 0) {
+            const rotCanvas = document.createElement('canvas');
+            const rotCtx = rotCanvas.getContext('2d');
+            const angle = params.rotation * Math.PI / 180;
+            const cos = Math.abs(Math.cos(angle));
+            const sin = Math.abs(Math.sin(angle));
+            rotCanvas.width = w;
+            rotCanvas.height = h;
+            rotCtx.translate(w / 2, h / 2);
+            rotCtx.rotate(angle);
+            rotCtx.drawImage(currentCanvas, -w / 2, -h / 2);
+            currentCtx.clearRect(0, 0, w, h);
+            currentCtx.drawImage(rotCanvas, 0, 0);
+        }
+
+        // Display
+        updateDisplay();
+    }
+
+    function applyUnsharpMask(ctx, w, h, amount) {
+        const imageData = ctx.getImageData(0, 0, w, h);
+        const data = imageData.data;
+        const copy = new Uint8ClampedArray(data);
+
+        const strength = amount * 2;
+
+        for (let y = 1; y < h - 1; y++) {
+            for (let x = 1; x < w - 1; x++) {
+                const idx = (y * w + x) * 4;
+                for (let c = 0; c < 3; c++) {
+                    const center = copy[idx + c] * 5;
+                    const neighbors =
+                        copy[((y-1)*w+x)*4+c] +
+                        copy[((y+1)*w+x)*4+c] +
+                        copy[(y*w+x-1)*4+c] +
+                        copy[(y*w+x+1)*4+c];
+                    const sharp = center - neighbors;
+                    data[idx + c] = Math.max(0, Math.min(255, copy[idx + c] + sharp * strength * 0.1));
+                }
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+    }
+
+    function applyClarity(ctx, w, h, amount) {
+        const imageData = ctx.getImageData(0, 0, w, h);
+        const data = imageData.data;
+        const copy = new Uint8ClampedArray(data);
+
+        for (let y = 2; y < h - 2; y++) {
+            for (let x = 2; x < w - 2; x++) {
+                const idx = (y * w + x) * 4;
+                for (let c = 0; c < 3; c++) {
+                    let sum = 0;
+                    let count = 0;
+                    for (let dy = -2; dy <= 2; dy++) {
+                        for (let dx = -2; dx <= 2; dx++) {
+                            sum += copy[((y+dy)*w+(x+dx))*4+c];
+                            count++;
+                        }
+                    }
+                    const avg = sum / count;
+                    const diff = copy[idx + c] - avg;
+                    data[idx + c] = Math.max(0, Math.min(255, copy[idx + c] + diff * amount));
+                }
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+    }
+
+    function updateDisplay() {
+        const w = currentCanvas.width;
+        const h = currentCanvas.height;
+
+        displayCanvas.width = w;
+        displayCanvas.height = h;
+        displayCtx.drawImage(currentCanvas, 0, 0);
+
+        displayCanvas.style.width = (w * zoom) + 'px';
+        displayCanvas.style.height = (h * zoom) + 'px';
+
+        document.getElementById('canvasInfo').textContent = `${w} × ${h} px`;
+        document.getElementById('zoomValue').textContent = Math.round(zoom * 100) + '%';
+    }
+
+    // ========================================
+    // FILTERS
+    // ========================================
+    function applyFilterPreset(key) {
+        activeFilter = key;
+        const preset = filterPresets[key];
+
+        // Reset all params first
+        Object.keys(defaultParams).forEach(k => {
+            if (k !== 'filterIntensity' && k !== 'rotation') {
+                params[k] = defaultParams[k];
+            }
+        });
+
+        // Apply preset params
+        if (preset.params) {
+            Object.entries(preset.params).forEach(([k, v]) => {
+                params[k] = v;
+            });
+        }
+
+        // Update UI sliders
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            const param = slider.dataset.param;
+            if (params[param] !== undefined) {
+                slider.value = params[param];
+                const valEl = document.getElementById(`val-${param}`);
+                if (valEl) {
+                    if (param === 'hue') valEl.textContent = params[param] + '°';
+                    else if (param === 'filterIntensity') valEl.textContent = params[param] + '%';
+                    else if (param === 'rotation') valEl.textContent = params[param] + '°';
+                    else valEl.textContent = params[param];
+                }
+            }
+        });
+
+        // Update filter grid active state
+        document.querySelectorAll('.filter-preset').forEach(el => {
+            el.classList.toggle('active', el.dataset.filter === key);
+        });
+
+        renderImage();
+        saveHistory();
+        notify(`✓ Filtro "${preset.name}" aplicado`);
+    }
+
+    // ========================================
+    // TRANSFORMATIONS
+    // ========================================
+    function rotateImage() {
+        if (!imageLoaded) return;
+        const temp = document.createElement('canvas');
+        const tctx = temp.getContext('2d');
+        temp.width = originalImage.height;
+        temp.height = originalImage.width;
+        tctx.translate(temp.width, 0);
+        tctx.rotate(Math.PI / 2);
+        tctx.drawImage(originalImage, 0, 0);
+
+        originalImage.width = temp.width;
+        originalImage.height = temp.height;
+        originalImage.getContext('2d').drawImage(temp, 0, 0);
+
+        renderImage();
+        zoomFit();
+        saveHistory();
+        notify('↻ Rotacionado 90°');
+    }
+
+    function rotateImageCCW() {
+        if (!imageLoaded) return;
+        const temp = document.createElement('canvas');
+        const tctx = temp.getContext('2d');
+        temp.width = originalImage.height;
+        temp.height = originalImage.width;
+        tctx.translate(0, temp.height);
+        tctx.rotate(-Math.PI / 2);
+        tctx.drawImage(originalImage, 0, 0);
+
+        originalImage.width = temp.width;
+        originalImage.height = temp.height;
+        originalImage.getContext('2d').drawImage(temp, 0, 0);
+
+        renderImage();
+        zoomFit();
+        saveHistory();
+        notify('↺ Rotacionado -90°');
+    }
+
+    function rotateImage180() {
+        if (!imageLoaded) return;
+        const temp = document.createElement('canvas');
+        const tctx = temp.getContext('2d');
+        temp.width = originalImage.width;
+        temp.height = originalImage.height;
+        tctx.translate(temp.width, temp.height);
+        tctx.rotate(Math.PI);
+        tctx.drawImage(originalImage, 0, 0);
+
+        originalImage.getContext('2d').drawImage(temp, 0, 0);
+
+        renderImage();
+        saveHistory();
+        notify('🔄 Rotacionado 180°');
+    }
+
+    function flipH() {
+        if (!imageLoaded) return;
+        const temp = document.createElement('canvas');
+        const tctx = temp.getContext('2d');
+        temp.width = originalImage.width;
+        temp.height = originalImage.height;
+        tctx.translate(temp.width, 0);
+        tctx.scale(-1, 1);
+        tctx.drawImage(originalImage, 0, 0);
+
+        originalImage.getContext('2d').drawImage(temp, 0, 0);
+
+        renderImage();
+        saveHistory();
+        notify('↔ Espelhado horizontalmente');
+    }
+
+    function flipV() {
+        if (!imageLoaded) return;
+        const temp = document.createElement('canvas');
+        const tctx = temp.getContext('2d');
+        temp.width = originalImage.width;
+        temp.height = originalImage.height;
+        tctx.translate(0, temp.height);
+        tctx.scale(1, -1);
+        tctx.drawImage(originalImage, 0, 0);
+
+        originalImage.getContext('2d').drawImage(temp, 0, 0);
+
+        renderImage();
+        saveHistory();
+        notify('↕ Espelhado verticalmente');
+    }
+
+    function showResize() {
+        if (!imageLoaded) return;
+        const w = originalImage.width;
+        const h = originalImage.height;
+        const newW = prompt(`Nova largura (atual: ${w}px):`, w);
+        if (!newW || isNaN(newW)) return;
+        const newH = prompt(`Nova altura (atual: ${h}px):`, Math.round(h * (parseInt(newW) / w)));
+        if (!newH || isNaN(newH)) return;
+
+        const temp = document.createElement('canvas');
+        const tctx = temp.getContext('2d');
+        temp.width = parseInt(newW);
+        temp.height = parseInt(newH);
+        tctx.drawImage(originalImage, 0, 0, parseInt(newW), parseInt(newH));
+
+        originalImage.width = temp.width;
+        originalImage.height = temp.height;
+        originalImage.getContext('2d').drawImage(temp, 0, 0);
+
+        renderImage();
+        zoomFit();
+        saveHistory();
+        notify(`⤡ Redimensionado para ${newW}×${newH}`);
+    }
+
+    // ========================================
+    // CROP
+    // ========================================
+    let cropState = {
+        active: false,
+        ratio: null,
+        startX: 0, startY: 0,
+        x: 0, y: 0, w: 0, h: 0,
+        dragging: false,
+        resizing: false,
+        handle: null
+    };
+
+    function setTool(tool) {
+        currentTool = tool;
+        document.querySelectorAll('.tool-btn[data-tool]').forEach(b => b.classList.remove('active'));
+        const activeBtn = document.querySelector(`.tool-btn[data-tool="${tool}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+
+        const overlay = document.getElementById('cropOverlay');
+        const actions = document.getElementById('cropActions');
+
+        if (tool === 'crop' && imageLoaded) {
+            overlay.classList.add('active');
+            actions.classList.add('active');
+            cropState.active = true;
+            initCropSelection();
+        } else {
+            overlay.classList.remove('active');
+            actions.classList.remove('active');
+            cropState.active = false;
+            document.getElementById('cropSelection').classList.remove('visible');
+        }
+    }
+
+    function initCropSelection() {
+        const canvas = displayCanvas;
+        const rect = canvas.getBoundingClientRect();
+        const sel = document.getElementById('cropSelection');
+        const overlay = document.getElementById('cropOverlay');
+
+        // Position overlay exactly over canvas
+        overlay.style.left = canvas.offsetLeft + 'px';
+        overlay.style.top = canvas.offsetTop + 'px';
+        overlay.style.width = canvas.offsetWidth + 'px';
+        overlay.style.height = canvas.offsetHeight + 'px';
+
+        // Default selection = full image
+        cropState.x = 0;
+        cropState.y = 0;
+        cropState.w = canvas.offsetWidth;
+        cropState.h = canvas.offsetHeight;
+        updateCropVisual();
+        sel.classList.add('visible');
+    }
+
+    function updateCropVisual() {
+        const sel = document.getElementById('cropSelection');
+        sel.style.left = cropState.x + 'px';
+        sel.style.top = cropState.y + 'px';
+        sel.style.width = cropState.w + 'px';
+        sel.style.height = cropState.h + 'px';
+    }
+
+    function setCropRatio(ratio) {
+        document.querySelectorAll('.crop-preset-btn').forEach(b =>
+            b.classList.toggle('active', b.textContent === ratio || (ratio === 'free' && b.textContent === 'Livre'))
+        );
+
+        if (ratio === 'free') {
+            cropState.ratio = null;
+        } else {
+            const [rw, rh] = ratio.split(':').map(Number);
+            cropState.ratio = rw / rh;
+        }
+
+        if (cropState.active) {
+            // Adjust selection to ratio
+            if (cropState.ratio) {
+                const canvas = displayCanvas;
+                const cw = canvas.offsetWidth;
+                const ch = canvas.offsetHeight;
+                let newW = cw;
+                let newH = newW / cropState.ratio;
+                if (newH > ch) {
+                    newH = ch;
+                    newW = newH * cropState.ratio;
+                }
+                cropState.x = (cw - newW) / 2;
+                cropState.y = (ch - newH) / 2;
+                cropState.w = newW;
+                cropState.h = newH;
+                updateCropVisual();
+            }
+        }
+
+        if (!cropState.active) setTool('crop');
+    }
+
+    // Crop mouse handling
+    document.addEventListener('mousedown', e => {
+        if (!cropState.active) return;
+        const overlay = document.getElementById('cropOverlay');
+        const rect = overlay.getBoundingClientRect();
+        if (!overlay.classList.contains('active')) return;
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Check if clicking a handle
+        const handle = e.target.closest('.crop-handle');
+        if (handle) {
+            cropState.resizing = true;
+            cropState.handle = handle.dataset.handle;
+            cropState.startX = e.clientX;
+            cropState.startY = e.clientY;
+            cropState.origX = cropState.x;
+            cropState.origY = cropState.y;
+            cropState.origW = cropState.w;
+            cropState.origH = cropState.h;
+            e.preventDefault();
+            return;
+        }
+
+        // Check if inside selection = drag
+        if (x >= cropState.x && x <= cropState.x + cropState.w &&
+            y >= cropState.y && y <= cropState.y + cropState.h) {
+            cropState.dragging = true;
+            cropState.startX = e.clientX - cropState.x;
+            cropState.startY = e.clientY - cropState.y;
+            e.preventDefault();
+            return;
+        }
+
+        // New selection
+        cropState.startX = x;
+        cropState.startY = y;
+        cropState.x = x;
+        cropState.y = y;
+        cropState.w = 0;
+        cropState.h = 0;
+        cropState.dragging = true;
+        cropState.newSelection = true;
+        document.getElementById('cropSelection').classList.add('visible');
+    });
+
+    document.addEventListener('mousemove', e => {
+        if (!cropState.active) return;
+        const overlay = document.getElementById('cropOverlay');
+        const rect = overlay.getBoundingClientRect();
+        const maxW = displayCanvas.offsetWidth;
+        const maxH = displayCanvas.offsetHeight;
+
+        if (cropState.resizing) {
+            const dx = e.clientX - cropState.startX;
+            const dy = e.clientY - cropState.startY;
+
+            switch (cropState.handle) {
+                case 'br':
+                    cropState.w = Math.max(20, Math.min(maxW - cropState.x, cropState.origW + dx));
+                    cropState.h = cropState.ratio ? cropState.w / cropState.ratio : Math.max(20, Math.min(maxH - cropState.y, cropState.origH + dy));
+                    break;
+                case 'bl':
+                    const newXBL = Math.max(0, cropState.origX + dx);
+                    cropState.w = Math.max(20, cropState.origW - (newXBL - cropState.origX));
+                    cropState.x = newXBL;
+                    cropState.h = cropState.ratio ? cropState.w / cropState.ratio : Math.max(20, Math.min(maxH - cropState.y, cropState.origH + dy));
+                    break;
+                case 'tr':
+                    cropState.w = Math.max(20, Math.min(maxW - cropState.x, cropState.origW + dx));
+                    const newYTR = Math.max(0, cropState.origY + dy);
+                    cropState.h = cropState.ratio ? cropState.w / cropState.ratio : Math.max(20, cropState.origH - (newYTR - cropState.origY));
+                    if (!cropState.ratio) cropState.y = newYTR;
+                    break;
+                case 'tl':
+                    const newXTL = Math.max(0, cropState.origX + dx);
+                    const newYTL = Math.max(0, cropState.origY + dy);
+                    cropState.w = Math.max(20, cropState.origW - (newXTL - cropState.origX));
+                    cropState.x = newXTL;
+                    cropState.h = cropState.ratio ? cropState.w / cropState.ratio : Math.max(20, cropState.origH - (newYTL - cropState.origY));
+                    if (!cropState.ratio) cropState.y = newYTL;
+                    break;
+            }
+            updateCropVisual();
+            return;
+        }
+
+        if (cropState.dragging && cropState.newSelection) {
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            cropState.w = Math.abs(x - cropState.startX);
+            cropState.h = cropState.ratio ? cropState.w / cropState.ratio : Math.abs(y - cropState.startY);
+            cropState.x = Math.min(x, cropState.startX);
+            cropState.y = cropState.ratio ? Math.min(y, cropState.startY) : Math.min(y, cropState.startY);
+            // Clamp
+            cropState.x = Math.max(0, Math.min(maxW - cropState.w, cropState.x));
+            cropState.y = Math.max(0, Math.min(maxH - cropState.h, cropState.y));
+            updateCropVisual();
+            return;
+        }
+
+        if (cropState.dragging) {
+            cropState.x = Math.max(0, Math.min(maxW - cropState.w, e.clientX - cropState.startX));
+            cropState.y = Math.max(0, Math.min(maxH - cropState.h, e.clientY - cropState.startY));
+            updateCropVisual();
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        cropState.dragging = false;
+        cropState.resizing = false;
+        cropState.newSelection = false;
+    });
+
+    function applyCrop() {
+        if (!imageLoaded) return;
+
+        const canvas = displayCanvas;
+        const scaleX = originalImage.width / canvas.offsetWidth;
+        const scaleY = originalImage.height / canvas.offsetHeight;
+
+        const cx = Math.round(cropState.x * scaleX);
+        const cy = Math.round(cropState.y * scaleY);
+        const cw = Math.round(cropState.w * scaleX);
+        const ch = Math.round(cropState.h * scaleY);
+
+        if (cw < 1 || ch < 1) return;
+
+        const temp = document.createElement('canvas');
+        temp.width = cw;
+        temp.height = ch;
+        temp.getContext('2d').drawImage(originalImage, cx, cy, cw, ch, 0, 0, cw, ch);
+
+        originalImage.width = cw;
+        originalImage.height = ch;
+        originalImage.getContext('2d').drawImage(temp, 0, 0);
+
+        setTool('move');
+        renderImage();
+        zoomFit();
+        saveHistory();
+        notify(`✂ Cortado para ${cw}×${ch}`);
+    }
+
+    function cancelCrop() {
+        setTool('move');
+    }
+
+    // ========================================
+    // ZOOM
+    // ========================================
+    function zoomIn() {
+        zoom = Math.min(5, zoom * 1.25);
+        updateDisplay();
+    }
+
+    function zoomOut() {
+        zoom = Math.max(0.1, zoom / 1.25);
+        updateDisplay();
+    }
+
+    function zoomFit() {
+        if (!imageLoaded) return;
+        const area = document.getElementById('canvasArea');
+        const aw = area.clientWidth - 40;
+        const ah = area.clientHeight - 80;
+        const iw = currentCanvas.width;
+        const ih = currentCanvas.height;
+        zoom = Math.min(aw / iw, ah / ih, 1);
+        updateDisplay();
+    }
+
+    // Scroll zoom
+    document.getElementById('canvasArea').addEventListener('wheel', e => {
+        if (!imageLoaded) return;
+        e.preventDefault();
+        if (e.deltaY < 0) zoomIn();
+        else zoomOut();
+    }, { passive: false });
+
+    // ========================================
+    // HISTORY (UNDO/REDO)
+    // ========================================
+    function saveHistory() {
+        if (!imageLoaded) return;
+
+        // Save state
+        const state = {
+            params: { ...params },
+            imageData: originalImage.toDataURL(),
+            filter: activeFilter
+        };
+
+        // Remove future states if we're in the middle
+        history = history.slice(0, historyIndex + 1);
+        history.push(state);
+        if (history.length > 50) history.shift();
+        historyIndex = history.length - 1;
+
+        updateHistoryButtons();
+    }
+
+    function undo() {
+        if (historyIndex <= 0) return;
+        historyIndex--;
+        restoreHistory();
+        notify('↶ Desfazer');
+    }
+
+    function redo() {
+        if (historyIndex >= history.length - 1) return;
+        historyIndex++;
+        restoreHistory();
+        notify('↷ Refazer');
+    }
+
+    function restoreHistory() {
+        const state = history[historyIndex];
+        if (!state) return;
+
+        Object.assign(params, state.params);
+        activeFilter = state.filter;
+
+        const img = new Image();
+        img.onload = () => {
+            originalImage.width = img.width;
+            originalImage.height = img.height;
+            originalImage.getContext('2d').drawImage(img, 0, 0);
+
+            // Update sliders
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                const param = slider.dataset.param;
+                if (params[param] !== undefined) {
+                    slider.value = params[param];
+                    const valEl = document.getElementById(`val-${param}`);
+                    if (valEl) {
+                        if (param === 'hue') valEl.textContent = params[param] + '°';
+                        else if (param === 'filterIntensity') valEl.textContent = params[param] + '%';
+                        else if (param === 'rotation') valEl.textContent = params[param] + '°';
+                        else valEl.textContent = params[param];
+                    }
+                }
+            });
+
+            renderImage();
+            updateHistoryButtons();
+        };
+        img.src = state.imageData;
+    }
+
+    function updateHistoryButtons() {
+        document.getElementById('undoBtn').disabled = historyIndex <= 0;
+        document.getElementById('redoBtn').disabled = historyIndex >= history.length - 1;
+    }
+
+    // ========================================
+    // RESET
+    // ========================================
+    function resetParams() {
+        Object.keys(defaultParams).forEach(k => params[k] = defaultParams[k]);
+        activeFilter = 'none';
+
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            const param = slider.dataset.param;
+            if (defaultParams[param] !== undefined) {
+                slider.value = defaultParams[param];
+                const valEl = document.getElementById(`val-${param}`);
+                if (valEl) {
+                    if (param === 'hue') valEl.textContent = '0°';
+                    else if (param === 'filterIntensity') valEl.textContent = '100%';
+                    else if (param === 'rotation') valEl.textContent = '0°';
+                    else valEl.textContent = defaultParams[param];
+                }
+            }
+        });
+
+        document.querySelectorAll('.filter-preset').forEach(el => {
+            el.classList.toggle('active', el.dataset.filter === 'none');
+        });
+    }
+
+    function resetAll() {
+        if (!imageLoaded) return;
+        if (!confirm('Resetar todas as edições?')) return;
+        resetParams();
+        renderImage();
+        saveHistory();
+        notify('🔄 Todas as edições resetadas');
+    }
+
+    function resetGroup(group) {
+        const groups = {
+            light: ['brightness', 'contrast', 'exposure', 'highlights', 'shadows', 'gamma'],
+            color: ['saturation', 'vibrance', 'temperature', 'tint', 'hue'],
+            detail: ['sharpness', 'clarity', 'blur', 'noise'],
+            effects: ['vignette', 'grain', 'sepia', 'fade', 'posterize', 'pixelate']
+        };
+
+        if (groups[group]) {
+            groups[group].forEach(p => {
+                params[p] = defaultParams[p];
+                const slider = document.querySelector(`input[data-param="${p}"]`);
+                if (slider) slider.value = defaultParams[p];
+                const valEl = document.getElementById(`val-${p}`);
+                if (valEl) {
+                    if (p === 'hue') valEl.textContent = '0°';
+                    else valEl.textContent = defaultParams[p];
+                }
+            });
+            scheduleRender();
+        }
+    }
+
+    // ========================================
+    // TABS
+    // ========================================
+    function switchTab(tab) {
+        document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('active'));
+        document.querySelector(`.sidebar-tab[data-tab="${tab}"]`).classList.add('active');
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+    }
+
+    // ========================================
+    // DOWNLOAD
+    // ========================================
+    function downloadImage() {
+        if (!imageLoaded) return;
+
+        // Render final at full quality
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = currentCanvas.width;
+        finalCanvas.height = currentCanvas.height;
+        finalCanvas.getContext('2d').drawImage(currentCanvas, 0, 0);
+
+        finalCanvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `editzz_${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            notify('✓ Imagem salva com sucesso!');
+        }, 'image/png', 1.0);
+    }
+
+    // ========================================
+    // UTILITY
+    // ========================================
+    function rgbToHsl(r, g, b) {
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+
+        if (max === min) {
+            h = s = 0;
+        } else {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                case g: h = ((b - r) / d + 2) / 6; break;
+                case b: h = ((r - g) / d + 4) / 6; break;
+            }
+        }
+        return [h, s, l];
+    }
+
+    function hslToRgb(h, s, l) {
+        let r, g, b;
+        if (s === 0) {
+            r = g = b = l;
+        } else {
+            const hue2rgb = (p, q, t) => {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+        return [r * 255, g * 255, b * 255];
+    }
+
+    function notify(text) {
+        const el = document.getElementById('notification');
+        const txt = document.getElementById('notifText');
+        txt.textContent = text;
+        el.classList.add('show');
+        clearTimeout(el._timeout);
+        el._timeout = setTimeout(() => el.classList.remove('show'), 2500);
+    }
+
+    // Init
+    init();
+    </script>
+</body>
