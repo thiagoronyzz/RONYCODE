@@ -184,6 +184,18 @@ export const categorias: Categoria[] = [
         imagem: "/apps/jogos-torresk.jpg",
         link: "/RONYCODE/Jogos/torresk(08)/index.html",
       },
+      {
+        nome: "Air Hockey Pro",
+        descricao: "Air hockey de mesa contra a CPU ou um amigo na mesma tela: física de rebote, gols em tempo real e partidas rápidas.",
+        imagem: "/apps/jogos-airhock.jpg",
+        link: "/RONYCODE/Jogos/airhock(09)/index.html",
+      },
+      {
+        nome: "2048 Clássico",
+        descricao: "O clássico puzzle de números: deslize as peças pelo tabuleiro, junte os iguais e chegue ao 2048 com o recorde salvo.",
+        imagem: "/apps/jogos-2048.jpg",
+        link: "/RONYCODE/Jogos/2048(10)/index.html",
+      },
     ],
   },
   {
