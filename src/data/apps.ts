@@ -237,7 +237,7 @@ export const categorias: Categoria[] = [
       },
       {
         nome: "Editzz",
-        descricao: "Editor de imagens completo no navegador: filtros, ajustes finos, recorte e exportação em alta qualidade.",
+        descricao: "Estúdio local para editar fotos e vídeos: filtros, recortes, clipes, legendas, mixagem de áudio e exportação.",
         imagem: "/apps/uteis-editzz.jpg",
         link: "/RONYCODE/Úteis/editzz(06)/index.html",
       },
